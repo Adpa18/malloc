@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Fri Feb 05 01:02:39 2016 Adrien WERY
+** Last update	Fri Feb 05 01:25:23 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -65,8 +65,8 @@ void    *malloc(size_t size)
 {
     if (size == 0)
         return (NULL);
-    if (!blocks && !(blocks = addMalloc(size)))
-        return (NULL);
+    if (!blocks)
+        return ((blocks = addMalloc(size)) ? blocks->block->ptr : NULL);
     // for on all mallocs
 
     // SegDault on printing
