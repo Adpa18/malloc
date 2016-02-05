@@ -5,13 +5,40 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Mon Feb 01 15:18:18 2016 Adrien WERY
+** Last update	Fri Feb 05 00:54:03 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
 #define MALLOC_H_
 
+#include <unistd.h>
+// Dev
+#include <stdio.h>
+// Dev
+
+#define DEFAULT_SIZE  4096
+#define MALLOC_SIZE sizeof(t_malloc *)
+#define BLOCK_SIZE sizeof(t_block *)
+
+#define MAX(x, y) (x > y) ? x : y
+
 typedef __SIZE_TYPE__ size_t;
+typedef enum { false, true } bool;
+
+typedef struct      s_block {
+    size_t          size;
+    bool            isFree;
+    void            *ptr;
+    struct s_block  *next;
+}                   t_block;
+
+typedef struct      s_malloc {
+    size_t          size;
+    size_t          freeSize;
+    void            *lastPtr;
+    t_block         *block;
+    struct s_malloc *next;
+}                   t_malloc;
 
 void    *malloc(size_t size);
 void    *calloc(size_t nb, size_t size);

@@ -21,7 +21,7 @@ SRC		= 	src/malloc.c	\
 			src/free.c		\
 			src/show.c		\
 
-CFLAGS 	=	-W -Wall -Wextra -Werror -O2 -fPIC
+CFLAGS 	=	-W -Wall -Wextra -Werror -O2 -fPIC -I./inc/
 
 LDFLAGS =	-shared
 
