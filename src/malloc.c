@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Fri Feb 05 16:27:31 2016 Adrien WERY
+** Last update	Fri Feb 05 16:41:18 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -62,6 +62,8 @@ t_malloc    *addMalloc(size_t size)
     return (mem);
 }
 
+size_t nb = 0;
+
 void    *malloc(size_t size)
 {
     t_malloc    *tmp;
@@ -73,14 +75,15 @@ void    *malloc(size_t size)
     if (!blocks)
         return ((blocks = addMalloc(size)) ? blocks->block->ptr : NULL);
 
+    printf("%lu\n", ++nb);
     tmp = blocks;
     while (tmp->next)
     {
-        if (blocks->freeSize > size)
+        if (tmp->freeSize > size)
         {
-            t_block *last = getLastBlock(blocks);
+            t_block *last = getLastBlock(tmp);
             last->next = addBlock(size, (void *)(last->ptr + last->size));
-            blocks->freeSize -= size;
+            tmp->freeSize -= size;
             return (last->next->ptr);
         }
         tmp = tmp->next;
