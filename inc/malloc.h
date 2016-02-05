@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Fri Feb 05 15:27:32 2016 Adrien WERY
+** Last update	Fri Feb 05 16:11:18 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -35,7 +35,6 @@ typedef struct      s_block {
 typedef struct      s_malloc {
     size_t          size;
     size_t          freeSize;
-    void            *lastPtr;
     t_block         *block;
     struct s_malloc *next;
 }                   t_malloc;
