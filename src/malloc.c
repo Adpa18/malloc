@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Fri Feb 05 16:11:05 2016 Adrien WERY
+** Last update	Fri Feb 05 16:27:31 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -64,21 +64,28 @@ t_malloc    *addMalloc(size_t size)
 
 void    *malloc(size_t size)
 {
+    t_malloc    *tmp;
+
     if (size == 0)
     return (NULL);
     if (pageSize == 0)
         pageSize = sysconf(_SC_PAGESIZE);
     if (!blocks)
         return ((blocks = addMalloc(size)) ? blocks->block->ptr : NULL);
-    // for on all mallocs
-    if (blocks->freeSize > size)
+
+    tmp = blocks;
+    while (tmp->next)
     {
-        t_block *last = getLastBlock(blocks);
-        last->next = addBlock(size, (void *)(last->ptr + last->size));
-        blocks->freeSize -= size;
-        return (last->next->ptr);
+        if (blocks->freeSize > size)
+        {
+            t_block *last = getLastBlock(blocks);
+            last->next = addBlock(size, (void *)(last->ptr + last->size));
+            blocks->freeSize -= size;
+            return (last->next->ptr);
+        }
+        tmp = tmp->next;
     }
-    t_malloc    *last = getLastMalloc();
-    last->next = addMalloc(size);
-    return (last->next->block->ptr);
+    tmp = getLastMalloc();
+    tmp->next = addMalloc(size);
+    return (tmp->next->block->ptr);
 }
