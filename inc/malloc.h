@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Fri Feb 05 00:54:03 2016 Adrien WERY
+** Last update	Fri Feb 05 15:27:32 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -17,8 +17,8 @@
 // Dev
 
 #define DEFAULT_SIZE  4096
-#define MALLOC_SIZE sizeof(t_malloc *)
-#define BLOCK_SIZE sizeof(t_block *)
+#define MALLOC_SIZE sizeof(struct s_malloc)
+#define BLOCK_SIZE sizeof(struct s_block)
 
 #define MAX(x, y) (x > y) ? x : y
 

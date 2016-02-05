@@ -5,12 +5,13 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Fri Feb 05 01:25:23 2016 Adrien WERY
+** Last update	Fri Feb 05 15:28:55 2016 Adrien WERY
 */
 
 #include "malloc.h"
 
 t_malloc    *blocks = NULL;
+size_t      pageSize = 0;
 
 t_malloc    *getLastMalloc()
 {
@@ -37,9 +38,7 @@ t_block     *addBlock(size_t size, void *ptr)
     t_block *block;
 
     block = ptr;
-    (void)size;
-    // SegFault on
-    // block->size = size;
+    block->size = size;
     block->isFree = false;
     block->ptr = ptr + BLOCK_SIZE;
     block->next = NULL;
@@ -51,7 +50,7 @@ t_malloc    *addMalloc(size_t size)
     t_malloc    *mem;
     size_t  memSize;
 
-    memSize = MAX(size, DEFAULT_SIZE);
+    memSize = MAX(size, pageSize);
     mem = sbrk(MALLOC_SIZE + memSize);
     mem->size = memSize;
     mem->freeSize = memSize - size;
@@ -63,16 +62,13 @@ t_malloc    *addMalloc(size_t size)
 
 void    *malloc(size_t size)
 {
+    if (pageSize == 0)
+        pageSize = sysconf(_SC_PAGESIZE);
     if (size == 0)
         return (NULL);
     if (!blocks)
         return ((blocks = addMalloc(size)) ? blocks->block->ptr : NULL);
     // for on all mallocs
-
-    // SegDault on printing
-    // printf("%lu\n", blocks->freeSize);
-    // printf("%d\n", blocks->freeSize > size);
-    // return (NULL);
     if (blocks->freeSize > size)
     {
         t_block *last = getLastBlock(blocks);
