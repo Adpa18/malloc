@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Fri Feb 05 16:41:18 2016 Adrien WERY
+** Last update	Fri Feb 05 20:03:02 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -23,27 +23,10 @@ t_malloc    *getLastMalloc()
     return (tmp);
 }
 
-t_block     *getLastBlock(t_malloc *mem)
+t_block     *addBlock(size_t size, t_block *block)
 {
-    t_block *tmp;
-
-    tmp = mem->block;
-    while (tmp->next)
-    {
-        // write(1, "cc\n", 3);
-        tmp = tmp->next;
-    }
-    return (tmp);
-}
-
-t_block     *addBlock(size_t size, void *ptr)
-{
-    t_block *block;
-
-    block = ptr;
     block->size = size;
     block->isFree = false;
-    block->ptr = ptr + BLOCK_SIZE;
     block->next = NULL;
     return (block);
 }
@@ -53,42 +36,44 @@ t_malloc    *addMalloc(size_t size)
     t_malloc    *mem;
     size_t  memSize;
 
-    memSize = MAX(size, pageSize);
-    mem = sbrk(MALLOC_SIZE + memSize);
-    mem->size = memSize;
-    mem->freeSize = memSize - size;
-    mem->block = addBlock(size, &mem + MALLOC_SIZE);
+    memSize = ALIGN(size + MALLOC_SIZE, pageSize);
+    if ((mem = sbrk(memSize)) == (void *) -1)
+        return (NULL);
+    mem->freeSize = memSize - REALSIZE(size) - MALLOC_SIZE;
+    mem->block = addBlock(size, (t_block *)((size_t)mem + MALLOC_SIZE));
+    mem->lastBlock = mem->block;
     mem->next = NULL;
     return (mem);
 }
 
-size_t nb = 0;
+void    *init(size_t size)
+{
+    pageSize = sysconf(_SC_PAGESIZE);
+    return ((blocks = addMalloc(size)) ? GET_PTR(blocks->block) : NULL);
+}
 
 void    *malloc(size_t size)
 {
     t_malloc    *tmp;
 
     if (size == 0)
-    return (NULL);
+        return (NULL);
+    size = ALIGN(size, 8);
     if (pageSize == 0)
-        pageSize = sysconf(_SC_PAGESIZE);
-    if (!blocks)
-        return ((blocks = addMalloc(size)) ? blocks->block->ptr : NULL);
-
-    printf("%lu\n", ++nb);
+        return (init(size));
     tmp = blocks;
-    while (tmp->next)
+    while (tmp)
     {
-        if (tmp->freeSize > size)
+        if (tmp->freeSize > REALSIZE(size))
         {
-            t_block *last = getLastBlock(tmp);
-            last->next = addBlock(size, (void *)(last->ptr + last->size));
-            tmp->freeSize -= size;
-            return (last->next->ptr);
+            tmp->lastBlock->next = addBlock(size, GET_NEXT_BLOCK(tmp->lastBlock));
+            tmp->lastBlock = tmp->lastBlock->next;
+            tmp->freeSize -= (REALSIZE(size) > tmp->freeSize) ? 0 : REALSIZE(size);
+            return (GET_PTR(tmp->lastBlock));
         }
         tmp = tmp->next;
     }
     tmp = getLastMalloc();
     tmp->next = addMalloc(size);
-    return (tmp->next->block->ptr);
+    return (GET_PTR(tmp->next->block));
 }

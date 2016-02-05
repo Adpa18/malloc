@@ -5,22 +5,26 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Fri Feb 05 16:11:18 2016 Adrien WERY
+** Last update	Fri Feb 05 20:18:10 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
 #define MALLOC_H_
 
 #include <unistd.h>
+#include <string.h>
 // Dev
 #include <stdio.h>
 // Dev
 
-#define DEFAULT_SIZE  4096
 #define MALLOC_SIZE sizeof(struct s_malloc)
-#define BLOCK_SIZE sizeof(struct s_block)
+#define BLOCK_SIZE  sizeof(struct s_block)
+#define NB_PAGES    8
 
-#define MAX(x, y) (x > y) ? x : y
+#define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
+#define GET_PTR(block) ((void*)(REALSIZE(block)))
+#define GET_NEXT_BLOCK(block) ((t_block*)(REALSIZE(block) + block->size))
+#define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
 
 typedef __SIZE_TYPE__ size_t;
 typedef enum { false, true } bool;
@@ -28,14 +32,13 @@ typedef enum { false, true } bool;
 typedef struct      s_block {
     size_t          size;
     bool            isFree;
-    void            *ptr;
     struct s_block  *next;
 }                   t_block;
 
 typedef struct      s_malloc {
-    size_t          size;
     size_t          freeSize;
     t_block         *block;
+    t_block         *lastBlock;
     struct s_malloc *next;
 }                   t_malloc;
 
