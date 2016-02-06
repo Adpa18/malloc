@@ -1,7 +1,6 @@
 if [[ $1 == "moul" ]]; then
     make re && LD_PRELOAD=./libmy_malloc.so ./test/moul_malloc_stud
-elif [[ $1 == "ls" ]]; then
-    echo "cc";
+elif [[ -n $1 ]]; then
     make re && LD_PRELOAD=./libmy_malloc.so $1
 else
     make re && gcc -W -Wall -Wextra -Werror test/main.c && LD_PRELOAD=./libmy_malloc.so ./a.out
