@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Fri Feb 05 23:11:03 2016 Adrien WERY
+** Last update	Sat Feb 06 15:09:19 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -17,12 +17,18 @@
 #include <stdio.h>
 // Dev
 
+// Merge close freeBlocks
+// block->parent
+// block->nextFree
+
 #define MALLOC_SIZE sizeof(struct s_malloc)
 #define BLOCK_SIZE  sizeof(struct s_block)
 #define NB_PAGES    8
 
+#define ISNULL(x) {if (x == 0)return (NULL);}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
 #define GET_PTR(block) ((void*)(REALSIZE(block)))
+#define GET_BLOCK(ptr) ((t_block *)((size_t)ptr - BLOCK_SIZE))
 #define GET_NEXT_BLOCK(block) ((t_block*)(REALSIZE(block) + block->size))
 #define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
 
@@ -32,6 +38,8 @@ typedef enum { false, true } bool;
 typedef struct      s_block {
     size_t          size;
     bool            isFree;
+    struct s_malloc *parent;
+    struct s_block  *nextFree;
     struct s_block  *next;
 }                   t_block;
 
