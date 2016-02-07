@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:29 2016 Adrien WERY
-** Last update	Sat Feb 06 16:23:48 2016 Adrien WERY
+** Last update	Sun Feb 07 21:44:58 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -19,10 +19,9 @@ void    free(void *ptr)
 
     if (!ptr)
         return;
-    write(1, "free\n", 5);
     block = GET_BLOCK(ptr);
-    if (block->isFree)
-        return;
+    write(1, "free\n", 5);
+    RETURN(block->isFree);
     block->isFree = true;
     if (!block->next)
     {
@@ -42,7 +41,8 @@ void    free(void *ptr)
             freeBlocks = block;
             return;
         }
-    while (tmp->next)
-        tmp = tmp->next;
+    while (tmp->nextFree)
+        tmp = tmp->nextFree;
     tmp->next = block;
+    write(1, "end\n", 4);
 }

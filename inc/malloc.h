@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Sat Feb 06 15:09:19 2016 Adrien WERY
+** Last update	Sun Feb 07 21:34:50 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -25,7 +25,8 @@
 #define BLOCK_SIZE  sizeof(struct s_block)
 #define NB_PAGES    8
 
-#define ISNULL(x) {if (x == 0)return (NULL);}
+#define R_NULL(x) {if (x)return (NULL);}
+#define RETURN(x) {if (x)return;}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
 #define GET_PTR(block) ((void*)(REALSIZE(block)))
 #define GET_BLOCK(ptr) ((t_block *)((size_t)ptr - BLOCK_SIZE))

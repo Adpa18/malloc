@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Sat Feb 06 15:10:50 2016 Adrien WERY
+** Last update	Sun Feb 07 21:34:30 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -59,7 +59,7 @@ void    *malloc(size_t size)
 {
     t_malloc    *tmp;
 
-    ISNULL(size);
+    R_NULL(size == 0);
     size = ALIGN(size, 8);
     if (pageSize == 0)
         return (init(size));
