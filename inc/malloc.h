@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Mon Feb 08 15:41:46 2016 Adrien WERY
+** Last update	Mon Feb 08 23:02:20 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -13,13 +13,12 @@
 
 #include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 // Dev
 #include <stdio.h>
+#define D true
+#define DEBUG(x) {if (D){x;}}
 // Dev
-
-// Merge close freeBlocks
-// block->parent
-// block->nextFree
 
 #define MALLOC_SIZE sizeof(struct s_malloc)
 #define BLOCK_SIZE  sizeof(struct s_block)
@@ -27,6 +26,8 @@
 
 #define R_NULL(x) {if (x)return (NULL);}
 #define R_CUSTOM(x, c) {if (x)return (c);}
+#define R_UNLOCK(x, c, th) {if (x){pthread_mutex_unlock(th);return (c);}}
+#define IF_SET(x, c) {if (x)c;}
 #define RETURN(x) {if (x)return;}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
 #define GET_PTR(block) ((void*)(REALSIZE(block)))

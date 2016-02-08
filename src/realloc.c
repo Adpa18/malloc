@@ -5,10 +5,12 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:23 2016 Adrien WERY
-** Last update	Mon Feb 08 15:50:27 2016 Adrien WERY
+** Last update	Mon Feb 08 22:51:55 2016 Adrien WERY
 */
 
 #include "malloc.h"
+
+pthread_mutex_t mutexR = PTHREAD_MUTEX_INITIALIZER;
 
 void    *realloc(void *ptr, size_t size)
 {
@@ -16,16 +18,23 @@ void    *realloc(void *ptr, size_t size)
     void    *new;
 
     R_NULL(size == 0);
+    DEBUG(write(1, "realloc\n", 8));
     R_CUSTOM(!ptr, malloc(size + 1));
+    pthread_mutex_lock(&mutexR);
     block = GET_BLOCK(ptr);
     if (!block->next && block->parent->freeSize >= size + block->size)
     {
         block->parent->freeSize -= size + block->size;
         block->size = size;
-        return (GET_PTR(block));
+        new = GET_PTR(block);
     }
-    R_NULL(!(new = malloc(size + 1)));
-    memcpy(new, ptr, GET_BLOCK(ptr)->size);
-    free(ptr);
+    else
+    {
+        R_NULL(!(new = malloc(size + 1)));
+        memcpy(new, ptr, GET_BLOCK(ptr)->size);
+        free(ptr);
+    }
+    pthread_mutex_unlock(&mutexR);
+    DEBUG(write(1, "reallocE\n", 9));
     return (new);
 }

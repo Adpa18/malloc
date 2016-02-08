@@ -5,10 +5,20 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:08 2016 Adrien WERY
-** Last update	Fri Feb 05 22:51:12 2016 Adrien WERY
+** Last update	Mon Feb 08 22:59:58 2016 Adrien WERY
 */
 
 #include "malloc.h"
+
+void    *my_memset(void *ptr, char c, size_t size)
+{
+    char    *d;
+
+    d = ptr;
+    while (--size)
+        *d++ = c;
+    return (ptr);
+}
 
 void    *calloc(size_t nb, size_t size)
 {
@@ -16,7 +26,8 @@ void    *calloc(size_t nb, size_t size)
     size_t  fullSize;
 
     fullSize = nb * size;
-    if (!(ptr = malloc(fullSize)))
-        return (NULL);
-    return (memset(ptr, 0, fullSize));
+    DEBUG(write(1, "calloc\n", 7));
+    R_NULL(!(ptr = malloc(fullSize)));
+    DEBUG(write(1, "callocE\n", 8));
+    return (my_memset(ptr, 0, fullSize));
 }
