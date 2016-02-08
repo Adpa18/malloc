@@ -8,6 +8,7 @@
 ** Last update	Mon Feb 08 22:51:55 2016 Adrien WERY
 */
 
+#include <string.h>
 #include "malloc.h"
 
 pthread_mutex_t mutexR = PTHREAD_MUTEX_INITIALIZER;

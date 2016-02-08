@@ -12,7 +12,8 @@
 #define MALLOC_H_
 
 #include <unistd.h>
-#include <string.h>
+// Ne sert que dans realloc.c
+// #include <string.h>
 #include <pthread.h>
 // Dev
 #include <stdio.h>
@@ -26,7 +27,8 @@
 
 #define R_NULL(x) {if (x)return (NULL);}
 #define R_CUSTOM(x, c) {if (x)return (c);}
-#define R_UNLOCK(x, c, th) {if (x){pthread_mutex_unlock(th);return (c);}}
+// Ne sert plus
+// #define R_UNLOCK(x, c, th) {if (x){pthread_mutex_unlock(th);return (c);}}
 #define IF_SET(x, c) {if (x)c;}
 #define RETURN(x) {if (x)return;}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
