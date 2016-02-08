@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Sun Feb 07 21:34:50 2016 Adrien WERY
+** Last update	Mon Feb 08 15:41:46 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -26,6 +26,7 @@
 #define NB_PAGES    8
 
 #define R_NULL(x) {if (x)return (NULL);}
+#define R_CUSTOM(x, c) {if (x)return (c);}
 #define RETURN(x) {if (x)return;}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
 #define GET_PTR(block) ((void*)(REALSIZE(block)))

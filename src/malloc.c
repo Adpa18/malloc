@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Sun Feb 07 21:34:30 2016 Adrien WERY
+** Last update	Mon Feb 08 16:03:11 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -49,6 +49,19 @@ t_malloc    *addMalloc(size_t size)
     return (mem);
 }
 
+void    *checkInFree(size_t size)
+{
+    t_block *tmp;
+
+    tmp = freeBlocks;
+    while (tmp && tmp->nextFree)
+    {
+        R_CUSTOM(tmp->size >= size, GET_PTR(tmp));
+        tmp = tmp->nextFree;
+    }
+    return (NULL);
+}
+
 void    *init(size_t size)
 {
     pageSize = sysconf(_SC_PAGESIZE);
@@ -58,11 +71,12 @@ void    *init(size_t size)
 void    *malloc(size_t size)
 {
     t_malloc    *tmp;
+    void        *ptr;
 
     R_NULL(size == 0);
     size = ALIGN(size, 8);
-    if (pageSize == 0)
-        return (init(size));
+    R_CUSTOM(pageSize == 0, init(size));
+    R_CUSTOM((ptr = checkInFree(size)), ptr);
     tmp = blocks;
     while (tmp)
     {

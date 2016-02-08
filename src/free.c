@@ -5,32 +5,38 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:29 2016 Adrien WERY
-** Last update	Sun Feb 07 21:44:58 2016 Adrien WERY
+** Last update	Mon Feb 08 16:02:57 2016 Adrien WERY
 */
 
 #include "malloc.h"
 
 extern t_block  *freeBlocks;
 
+void    mergeBlocks(t_malloc *parent)
+{
+    t_block *tmp;
+
+    tmp = parent->block;
+    while (tmp->next)
+    {
+        tmp = tmp->next;
+    }
+}
+
 void    free(void *ptr)
 {
     t_block *block;
     t_block    *tmp;
 
-    if (!ptr)
-        return;
+    RETURN(!ptr);
     block = GET_BLOCK(ptr);
-    write(1, "free\n", 5);
     RETURN(block->isFree);
     block->isFree = true;
     if (!block->next)
     {
-        write(1, "rm\n", 3);
         if ((tmp = block->parent->block) != block->parent->lastBlock)
-            {
-                while (tmp->next != block->parent->lastBlock)
-                    tmp = tmp->next;
-            }
+            while (tmp->next != block->parent->lastBlock)
+                tmp = tmp->next;
         block->parent->lastBlock = tmp;
         block->parent->lastBlock->next = NULL;
         block->parent->freeSize += REALSIZE(block->size);
@@ -43,6 +49,5 @@ void    free(void *ptr)
         }
     while (tmp->nextFree)
         tmp = tmp->nextFree;
-    tmp->next = block;
-    write(1, "end\n", 4);
+    tmp->nextFree = block;
 }
