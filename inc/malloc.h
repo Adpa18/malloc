@@ -5,15 +5,13 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Tue Feb 09 11:09:14 2016 Adrien WERY
+** Last update	Tue Feb 09 11:15:45 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
 #define MALLOC_H_
 
 #include <unistd.h>
-// Ne sert que dans realloc.c
-// #include <string.h>
 #include <pthread.h>
 // Dev
 #include <stdio.h>
@@ -27,8 +25,6 @@
 
 #define R_NULL(x) {if (x)return (NULL);}
 #define R_CUSTOM(x, c) {if (x)return (c);}
-// Ne sert plus
-// #define R_UNLOCK(x, c, th) {if (x){pthread_mutex_unlock(th);return (c);}}
 #define IF_SET(x, c) {if (x)c;}
 #define RETURN(x) {if (x)return;}
 #define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
