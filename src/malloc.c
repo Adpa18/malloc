@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Mon Feb 08 23:08:20 2016 Adrien WERY
+** Last update	Tue Feb 09 11:09:07 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -52,22 +52,25 @@ t_malloc    *addMalloc(size_t size)
 void    *checkInFree(size_t size)
 {
     t_block *tmp;
+    t_block *block;
 
     tmp = freeBlocks;
-    if (tmp && tmp->size >= size && tmp->isFree)
-        {
-            freeBlocks = tmp->nextFree;
-            tmp->isFree = false;
-            tmp->nextFree = NULL;
-            return (GET_PTR(tmp));
-        }
+    // if (tmp && tmp->size >= size && tmp->isFree)
+    //     {
+    //         freeBlocks = tmp->nextFree;
+    //         tmp->isFree = false;
+    //         tmp->nextFree = NULL;
+    //         return (GET_PTR(tmp));
+    //     }
     while (tmp && tmp->nextFree)
     {
         if (tmp->nextFree->size >= size && tmp->nextFree->isFree)
         {
-            tmp->nextFree->isFree = false;
-            tmp->nextFree->nextFree = NULL;
-            return (GET_PTR(tmp->nextFree));
+            block = tmp->nextFree;
+            tmp->nextFree = tmp->nextFree->nextFree;
+            block->isFree = false;
+            block->nextFree = NULL;
+            return (GET_PTR(block));
         }
         tmp = tmp->nextFree;
     }
@@ -80,9 +83,16 @@ void    *findSpace(t_malloc *tmp, size_t size)
     {
         if (tmp->freeSize > REALSIZE(size))
         {
-            // LastBlock->size SegFault
-            tmp->lastBlock->next = addBlock(size, GET_NEXT_BLOCK(tmp->lastBlock), tmp);
-            tmp->lastBlock = tmp->lastBlock->next;
+            if (tmp->block)
+            {
+                tmp->lastBlock->next = addBlock(size, GET_NEXT_BLOCK(tmp->lastBlock), tmp);
+                tmp->lastBlock = tmp->lastBlock->next;
+            }
+            else
+            {
+                tmp->block = addBlock(size, (t_block *)((size_t)tmp + MALLOC_SIZE), tmp);
+                tmp->lastBlock = tmp->block;
+            }
             tmp->freeSize -= (REALSIZE(size) > tmp->freeSize) ? 0 : REALSIZE(size);
             return (GET_PTR(tmp->lastBlock));
         }
