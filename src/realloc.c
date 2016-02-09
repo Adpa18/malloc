@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:23 2016 Adrien WERY
-** Last update	Mon Feb 08 22:51:55 2016 Adrien WERY
+** Last update	Tue Feb 09 11:48:04 2016 Adrien WERY
 */
 
 #include <string.h>
@@ -23,16 +23,16 @@ void    *realloc(void *ptr, size_t size)
     R_CUSTOM(!ptr, malloc(size + 1));
     pthread_mutex_lock(&mutexR);
     block = GET_BLOCK(ptr);
-    if (!block->next && block->parent->freeSize >= size + block->size)
+    if (!block->next && (size < block->size || block->parent->freeSize >= size - block->size))
     {
-        block->parent->freeSize -= size + block->size;
+        block->parent->freeSize = block->parent->freeSize + block->size - size;
         block->size = size;
         new = GET_PTR(block);
     }
     else
     {
         R_NULL(!(new = malloc(size + 1)));
-        memcpy(new, ptr, GET_BLOCK(ptr)->size);
+        memcpy(new, ptr, MIN(block->size, size));
         free(ptr);
     }
     pthread_mutex_unlock(&mutexR);

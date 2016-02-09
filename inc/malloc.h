@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Tue Feb 09 11:17:02 2016 Adrien WERY
+** Last update	Tue Feb 09 11:40:42 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 #include <pthread.h>
 // Dev
 #include <stdio.h>
-#define D true
+#define D false
 #define DEBUG(x) {if (D){x;}}
 // Dev
 
@@ -32,6 +32,7 @@
 #define GET_BLOCK(ptr) ((t_block *)((size_t)ptr - BLOCK_SIZE))
 #define GET_NEXT_BLOCK(block) ((t_block*)(REALSIZE(block) + block->size))
 #define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
+#define MIN(x, y) ((x < y) ? x : y)
 
 typedef __SIZE_TYPE__ size_t;
 typedef enum { false, true } bool;
