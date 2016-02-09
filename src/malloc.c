@@ -5,25 +5,16 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Tue Feb 09 11:30:08 2016 Adrien WERY
+** Last update	Tue Feb 09 12:52:39 2016 Adrien WERY
 */
 
 #include "malloc.h"
 
 t_malloc    *blocks = NULL;
+t_malloc    *last = NULL;
 t_block     *freeBlocks = NULL;
 size_t      pageSize = 0;
 pthread_mutex_t mutexM = PTHREAD_MUTEX_INITIALIZER;
-
-t_malloc    *getLastMalloc()
-{
-    t_malloc    *tmp;
-
-    tmp = blocks;
-    while (tmp->next)
-        tmp = tmp->next;
-    return (tmp);
-}
 
 t_block     *addBlock(size_t size, t_block *block, t_malloc *parent)
 {
@@ -46,6 +37,7 @@ t_malloc    *addMalloc(size_t size)
     mem->block = addBlock(size, (t_block *)((size_t)mem + MALLOC_SIZE), mem);
     mem->lastBlock = mem->block;
     mem->next = NULL;
+    last = mem;
     return (mem);
 }
 
@@ -55,13 +47,13 @@ void    *checkInFree(size_t size)
     t_block *block;
 
     tmp = freeBlocks;
-    // if (tmp && tmp->size >= size && tmp->isFree)
-    //     {
-    //         freeBlocks = tmp->nextFree;
-    //         tmp->isFree = false;
-    //         tmp->nextFree = NULL;
-    //         return (GET_PTR(tmp));
-    //     }
+    if (tmp && tmp->size >= size && tmp->isFree)
+        {
+            freeBlocks = tmp->nextFree;
+            tmp->isFree = false;
+            tmp->nextFree = NULL;
+            return (GET_PTR(tmp));
+        }
     while (tmp && tmp->nextFree)
     {
         if (tmp->nextFree->size >= size && tmp->nextFree->isFree)
@@ -103,16 +95,13 @@ void    *findSpace(t_malloc *tmp, size_t size)
 
 void    *moreSpace(size_t size)
 {
-    t_malloc    *tmp;
-
-    tmp = getLastMalloc();
-    tmp->next = addMalloc(size);
-    return (GET_PTR(tmp->next->block));
+    last->next = addMalloc(size);
+    return (GET_PTR(last->block));
 }
 
 void    *init(size_t size)
 {
-    pageSize = sysconf(_SC_PAGESIZE);
+    pageSize = sysconf(_SC_PAGESIZE) * NB_PAGES;
     return ((blocks = addMalloc(size)) ? GET_PTR(blocks->block) : NULL);
 }
 
@@ -121,7 +110,7 @@ void    *malloc(size_t size)
     void        *ptr;
 
     R_NULL(size == 0);
-    size = ALIGN(size, 8);
+    size = ALIGN(size, ALIGN_SIZE);
     ptr = NULL;
     pthread_mutex_lock(&mutexM);
     DEBUG(write(1, "malloc\n", 7));

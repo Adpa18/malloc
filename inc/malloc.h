@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Tue Feb 09 11:40:42 2016 Adrien WERY
+** Last update	Tue Feb 09 13:04:56 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -18,6 +18,13 @@
 #define D false
 #define DEBUG(x) {if (D){x;}}
 // Dev
+
+#if __x86_64__
+    #define ALIGN_SIZE 8
+#else
+    #define ALIGN_SIZE 4
+#endif
+
 
 #define MALLOC_SIZE sizeof(struct s_malloc)
 #define BLOCK_SIZE  sizeof(struct s_block)
