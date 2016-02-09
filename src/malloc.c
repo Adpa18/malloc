@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Tue Feb 09 11:10:33 2016 Adrien WERY
+** Last update	Tue Feb 09 11:17:31 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -69,7 +69,7 @@ void    *checkInFree(size_t size)
             block = tmp->nextFree;
             tmp->nextFree = tmp->nextFree->nextFree;
             block->isFree = false;
-            block->nextFree = NULL;
+            // block->nextFree = NULL;
             return (GET_PTR(block));
         }
         tmp = tmp->nextFree;

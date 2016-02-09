@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Tue Feb 09 11:15:45 2016 Adrien WERY
+** Last update	Tue Feb 09 11:17:02 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 #include <pthread.h>
 // Dev
 #include <stdio.h>
-#define D false
+#define D true
 #define DEBUG(x) {if (D){x;}}
 // Dev
 
