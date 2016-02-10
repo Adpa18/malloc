@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Wed Feb 10 20:45:54 2016 Adrien WERY
+** Last update	Wed Feb 10 20:53:25 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 #include <pthread.h>
 // Dev
 #include <stdio.h>
-#define D false
+#define D true
 #define DEBUG(x) {if (D){x;}}
 // Dev
 
@@ -50,8 +50,6 @@ typedef struct      s_block {
     size_t          size;
     bool            isFree;
     struct s_malloc *parent;
-    // struct s_block  *prevFree;
-    // struct s_block  *nextFree;
     struct s_block  *prev;
     struct s_block  *next;
 }                   t_block;

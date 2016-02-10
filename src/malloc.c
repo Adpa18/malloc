@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Wed Feb 10 20:38:53 2016 Adrien WERY
+** Last update	Wed Feb 10 21:01:53 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -50,6 +50,7 @@ void    *findSpace(t_malloc *tmp, const size_t size)
     {
         if (tmp->freeSize > REALSIZE(size))
         {
+            // printf("%lu\n", tmp->freeSize);
             if (!tmp->lastBlock)
                 tmp->startBlock = addBlock(size, (t_block *)((size_t)tmp + MALLOC_SIZE), tmp);
             else
