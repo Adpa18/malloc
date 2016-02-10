@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Thu Feb 04 23:26:39 2016 Adrien WERY
-** Last update	Wed Feb 10 18:26:41 2016 Adrien WERY
+** Last update	Wed Feb 10 23:17:03 2016 Adrien WERY
 */
 
 #include <stdlib.h>
@@ -15,7 +15,5 @@
 
 int main()
 {
-    char    toto[10];
-    free(realloc(void*)-1, 10));
     return (0);
 }
