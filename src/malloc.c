@@ -5,55 +5,43 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Wed Feb 10 17:01:53 2016 Adrien WERY
+** Last update	Wed Feb 10 20:38:53 2016 Adrien WERY
 */
 
 #include "malloc.h"
 
 t_malloc    *blocks = NULL;
-t_malloc    *last = NULL;
-t_block     *freeBlocks = NULL;
 pthread_mutex_t mutexM = PTHREAD_MUTEX_INITIALIZER;
-// size_t      pageSize = 0;
 
 t_block     *addBlock(const size_t size, t_block *block, t_malloc *parent)
 {
     block->size = size;
     block->isFree = false;
     block->parent = parent;
-    block->nextFree = NULL;
     block->prev = parent->lastBlock;
     block->next = NULL;
     parent->lastBlock = block;
     return (block);
 }
 
-void    *checkInFree(const size_t size)
+void    *getFreeBlock(t_block *tmp, size_t size, size_t *max)
 {
-    t_block *tmp;
-    t_block *block;
+    void    *ptr;
 
-    R_NULL(!(tmp = freeBlocks));
-    if (tmp && tmp->size >= size && tmp->isFree)
-        {
-            freeBlocks = tmp->nextFree;
-            tmp->isFree = false;
-            tmp->nextFree = NULL;
-            return(GET_PTR(tmp));
-        }
-    while (tmp && tmp->nextFree)
+    *max = 0;
+    ptr = NULL;
+    while (tmp->next)
     {
-        if (tmp->nextFree->size >= size && tmp->nextFree->isFree)
+        if (tmp->isFree && tmp->size >= size)
         {
-            block = tmp->nextFree;
-            tmp->nextFree = tmp->nextFree->nextFree;
-            block->isFree = false;
-            block->nextFree = NULL;
-            return (GET_PTR(block));
+            tmp->isFree = false;
+            ptr = GET_PTR(tmp);
         }
-        tmp = tmp->nextFree;
+        else if (tmp->size > *max)
+            *max = tmp->size;
+        tmp = tmp->next;
     }
-    return (NULL);
+    return (ptr);
 }
 
 void    *findSpace(t_malloc *tmp, const size_t size)
@@ -69,6 +57,8 @@ void    *findSpace(t_malloc *tmp, const size_t size)
             tmp->freeSize -= MAX(REALSIZE(size), 0);
             return (GET_PTR(tmp->lastBlock));
         }
+        else if (tmp->maxFreeSize > size)
+            return (getFreeBlock(tmp->startBlock, size, &(tmp->maxFreeSize)));
         tmp = tmp->next;
     }
     return (NULL);
@@ -76,14 +66,17 @@ void    *findSpace(t_malloc *tmp, const size_t size)
 
 t_malloc    *moreSpace(const size_t size)
 {
+    static t_malloc     *last = NULL;
     t_malloc    *mem;
     size_t      memSize;
 
     memSize = ALIGN(REALSIZE(size) + MALLOC_SIZE, PAGE_SIZE);
     R_NULL((mem = sbrk(memSize)) == (void *) -1);
     mem->freeSize = memSize - REALSIZE(size) - MALLOC_SIZE;
+    mem->maxFreeSize = 0;
     mem->startBlock = addBlock(size, (t_block *)((size_t)mem + MALLOC_SIZE), mem);
     mem->next = NULL;
+    mem->prev = last;
     if (last)
     {
         blocks = mem;
@@ -102,7 +95,6 @@ void    *malloc(size_t size)
     ptr = NULL;
     pthread_mutex_lock(&mutexM);
     DEBUG(write(1, "malloc\n", 7));
-    IF_SET(!ptr && freeBlocks, ptr = checkInFree(size));
     IF_SET(!ptr && blocks, ptr = findSpace(blocks, size));
     IF_SET(!ptr, ptr = moreSpace(size));
     pthread_mutex_unlock(&mutexM);

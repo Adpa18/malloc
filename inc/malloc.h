@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Wed Feb 10 16:10:36 2016 Adrien WERY
+** Last update	Wed Feb 10 20:45:54 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 #include <pthread.h>
 // Dev
 #include <stdio.h>
-#define D true
+#define D false
 #define DEBUG(x) {if (D){x;}}
 // Dev
 
@@ -34,6 +34,7 @@ typedef enum { false, true } bool;
 #define PAGE_SIZE   (size_t)(sysconf(_SC_PAGESIZE) * NB_PAGES)
 
 #define R_NULL(x) {if (x)return (NULL);}
+#define R_FALSE(x) {if (x)return (false);}
 #define R_CUSTOM(x, c) {if (x)return (c);}
 #define IF_SET(x, c) {if (x)c;}
 #define RETURN(x) {if (x)return;}
@@ -49,16 +50,18 @@ typedef struct      s_block {
     size_t          size;
     bool            isFree;
     struct s_malloc *parent;
-    struct s_block  *prevFree;
-    struct s_block  *nextFree;
+    // struct s_block  *prevFree;
+    // struct s_block  *nextFree;
     struct s_block  *prev;
     struct s_block  *next;
 }                   t_block;
 
 typedef struct      s_malloc {
     size_t          freeSize;
+    size_t          maxFreeSize;
     t_block         *startBlock;
     t_block         *lastBlock;
+    struct s_malloc *prev;
     struct s_malloc *next;
 }                   t_malloc;
 
