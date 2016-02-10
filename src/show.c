@@ -16,7 +16,7 @@ void    show_alloc_mem()
 {
     t_block *tmp;
 
-    tmp = blocks->block;
+    tmp = blocks->startBlock;
     printf("break : 0x%lX\n", (size_t) sbrk(0));
     while (tmp)
     {

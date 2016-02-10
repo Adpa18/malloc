@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Tue Feb 09 13:04:56 2016 Adrien WERY
+** Last update	Wed Feb 10 16:10:36 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -15,7 +15,7 @@
 #include <pthread.h>
 // Dev
 #include <stdio.h>
-#define D false
+#define D true
 #define DEBUG(x) {if (D){x;}}
 // Dev
 
@@ -25,10 +25,13 @@
     #define ALIGN_SIZE 4
 #endif
 
+typedef __SIZE_TYPE__ size_t;
+typedef enum { false, true } bool;
 
 #define MALLOC_SIZE sizeof(struct s_malloc)
 #define BLOCK_SIZE  sizeof(struct s_block)
 #define NB_PAGES    8
+#define PAGE_SIZE   (size_t)(sysconf(_SC_PAGESIZE) * NB_PAGES)
 
 #define R_NULL(x) {if (x)return (NULL);}
 #define R_CUSTOM(x, c) {if (x)return (c);}
@@ -39,22 +42,22 @@
 #define GET_BLOCK(ptr) ((t_block *)((size_t)ptr - BLOCK_SIZE))
 #define GET_NEXT_BLOCK(block) ((t_block*)(REALSIZE(block) + block->size))
 #define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
+#define MAX(x, y) ((x > y) ? x : y)
 #define MIN(x, y) ((x < y) ? x : y)
-
-typedef __SIZE_TYPE__ size_t;
-typedef enum { false, true } bool;
 
 typedef struct      s_block {
     size_t          size;
     bool            isFree;
     struct s_malloc *parent;
+    struct s_block  *prevFree;
     struct s_block  *nextFree;
+    struct s_block  *prev;
     struct s_block  *next;
 }                   t_block;
 
 typedef struct      s_malloc {
     size_t          freeSize;
-    t_block         *block;
+    t_block         *startBlock;
     t_block         *lastBlock;
     struct s_malloc *next;
 }                   t_malloc;
