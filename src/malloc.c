@@ -64,12 +64,14 @@ void    *findSpace(t_malloc *tmp, const size_t size)
     return (NULL);
 }
 
-t_malloc    *moreSpace(const size_t size)
+t_malloc    *moreSpace(const size_t size, bool get)
 {
     static t_malloc     *last = NULL;
     t_malloc    *mem;
     size_t      memSize;
 
+    if (get)
+      return (last);
     memSize = ALIGN(REALSIZE(size) + MALLOC_SIZE, PAGE_SIZE);
     R_NULL((mem = sbrk(memSize)) == (void *) -1);
     mem->freeSize = memSize - REALSIZE(size) - MALLOC_SIZE;
@@ -78,10 +80,16 @@ t_malloc    *moreSpace(const size_t size)
     mem->next = NULL;
     mem->prev = last;
     if (!blocks)
-        blocks = mem;
-    if (last)
-        last->next = mem;
-    last = mem;
+    {
+      blocks = mem;
+      last = NULL;
+      // last->next = mem;
+    }
+    else if (last)
+    {
+      last->next = mem;
+      last = mem;
+    }
     return (GET_PTR(mem->startBlock));
 }
 
@@ -89,13 +97,14 @@ void    *malloc(size_t size)
 {
     void        *ptr;
 
-    R_NULL(size == 0);
+    // printf("%lu\n", size);
+    // R_NULL(size == 0);
     size = ALIGN(size, ALIGN_SIZE);
     ptr = NULL;
     pthread_mutex_lock(&mutexM);
     DEBUG(write(1, "malloc\n", 7));
     IF_SET(!ptr && blocks, ptr = findSpace(blocks, size));
-    IF_SET(!ptr, ptr = moreSpace(size));
+    IF_SET(!ptr, ptr = moreSpace(size, false));
     pthread_mutex_unlock(&mutexM);
     DEBUG(write(1, "mallocE\n", 8));
     return (ptr);

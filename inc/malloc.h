@@ -68,4 +68,6 @@ void    *calloc(size_t nb, size_t size);
 void    *realloc(void *ptr, size_t size);
 void    free(void *ptr);
 void    show_alloc_mem();
+t_malloc    *moreSpace(const size_t size, bool get);
+
 #endif /* !MALLOC_H_ */

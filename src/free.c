@@ -35,29 +35,32 @@ void    free(void *ptr)
 {
     t_block *block;
 
-    RETURN(!ptr);
+    // write(1, "cc\n", 3);
+    // printf("%p\n", ptr);
+    RETURN(!ptr || ptr > (void *)moreSpace(0, true));
     block = GET_BLOCK(ptr);
     RETURN(block->isFree);
     pthread_mutex_lock(&mutexM);
     DEBUG(write(1, "free\n", 5));
     mergeBlocks(&block);
     block->isFree = true;
-    if (block == block->parent->lastBlock)
-    {
-        block->parent->lastBlock = block->prev;
-        block->parent->freeSize += REALSIZE(block->size);
-        // if (!block->parent->next && block->parent->freeSize > PAGE_SIZE)
-        // {
-        //     if (blocks != block->parent)
-        //     {
-        //         if (block->parent->prev)
-        //             block->parent->prev->next = block->parent->next;
-        //         brk(block->parent);
-        //         // sbrk(-(block->parent->freeSize + MALLOC_SIZE));
-        //     }
-        // }
-    }
-    else if (block->parent->maxFreeSize < block->size)
+    // if (block == block->parent->lastBlock)
+    // {
+    //     block->parent->lastBlock = block->prev;
+    //     block->parent->freeSize += REALSIZE(block->size);
+    //     // if (!block->parent->next && block->parent->freeSize > PAGE_SIZE)
+    //     // {
+    //     //     if (blocks != block->parent)
+    //     //     {
+    //     //         if (block->parent->prev)
+    //     //             block->parent->prev->next = block->parent->next;
+    //     //         brk(block->parent);
+    //     //         // sbrk(-(block->parent->freeSize + MALLOC_SIZE));
+    //     //     }
+    //     // }
+    // }
+    // else
+    if (block->parent->maxFreeSize < block->size)
         block->parent->maxFreeSize = block->size;
     pthread_mutex_unlock(&mutexM);
     DEBUG(write(1, "freeE\n", 6));
