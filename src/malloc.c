@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Wed Feb 10 23:32:21 2016 Adrien WERY
+** Last update	Thu Feb 11 05:26:12 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -93,8 +93,7 @@ void    *malloc(size_t size)
 {
     void        *ptr;
 
-    // printf("%lu\n", size);
-    // R_NULL(size == 0);
+    R_NULL(size == 0);
     size = ALIGN(size, ALIGN_SIZE);
     ptr = NULL;
     pthread_mutex_lock(&mutexM);

@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:29 2016 Adrien WERY
-** Last update	Wed Feb 10 20:59:49 2016 Adrien WERY
+** Last update	Thu Feb 11 05:26:07 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -36,8 +36,6 @@ void    free(void *ptr)
 {
     t_block *block;
 
-    // write(1, "cc\n", 3);
-    // printf("%p\n", ptr);
     RETURN(!ptr || ptr > (void *)moreSpace(0, true));
     block = GET_BLOCK(ptr);
     RETURN(block->isFree);
