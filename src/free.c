@@ -10,6 +10,7 @@
 
 #include "malloc.h"
 
+extern t_malloc *blocks;
 extern pthread_mutex_t mutexM;
 
 void    mergeBlocks(t_block **block)
@@ -48,16 +49,16 @@ void    free(void *ptr)
     {
         block->parent->lastBlock = block->prev;
         block->parent->freeSize += REALSIZE(block->size);
-        // if (!block->parent->next && block->parent->freeSize > PAGE_SIZE)
-        // {
-        //     if (blocks != block->parent)
-        //     {
-        //         if (block->parent->prev)
-        //             block->parent->prev->next = block->parent->next;
-        //         brk(block->parent);
-        //         // sbrk(-(block->parent->freeSize + MALLOC_SIZE));
-        //     }
-        // }
+        if (!block->parent->next && block->parent->freeSize > PAGE_SIZE)
+        {
+            if (blocks != block->parent)
+            {
+                if (block->parent->prev)
+                    block->parent->prev->next = block->parent->next;
+                brk(block->parent);
+                // sbrk(-(block->parent->freeSize + MALLOC_SIZE));
+            }
+        }
     }
     else
     if (block->parent->maxFreeSize < block->size)
