@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Wed Feb 10 23:33:08 2016 Adrien WERY
+** Last update	Thu Feb 11 11:47:56 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -38,10 +38,11 @@ typedef enum { false, true } bool;
 #define R_CUSTOM(x, c) {if (x)return (c);}
 #define IF_SET(x, c) {if (x)c;}
 #define RETURN(x) {if (x)return;}
-#define REALSIZE(size) ((size_t)size + BLOCK_SIZE)
-#define GET_PTR(block) ((void*)(REALSIZE(block)))
+#define M_SIZE(ptr) ((size_t)ptr + MALLOC_SIZE)
+#define B_SIZE(ptr) ((size_t)ptr + BLOCK_SIZE)
+#define GET_PTR(block) ((void*)(B_SIZE(block)))
 #define GET_BLOCK(ptr) ((t_block *)((size_t)ptr - BLOCK_SIZE))
-#define GET_NEXT_BLOCK(block) ((t_block*)(REALSIZE(block) + block->size))
+#define GET_NEXT_BLOCK(block) ((t_block*)(B_SIZE(block) + block->size))
 #define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
 #define MAX(x, y) ((x > y) ? x : y)
 #define MIN(x, y) ((x < y) ? x : y)
@@ -62,6 +63,10 @@ typedef struct      s_malloc {
     struct s_malloc *prev;
     struct s_malloc *next;
 }                   t_malloc;
+
+void    *_malloc(size_t size);
+void    _free(void *ptr);
+void    *getFreeBlock(t_block *tmp, size_t size, size_t *max);
 
 void    *malloc(size_t size);
 void    *calloc(size_t nb, size_t size);

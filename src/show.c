@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:37 2016 Adrien WERY
-** Last update	Fri Feb 05 23:20:25 2016 Adrien WERY
+** Last update	Thu Feb 11 11:36:29 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -23,7 +23,7 @@ void    show_alloc_mem()
         if (!tmp->isFree)
         {
             printf("0x%lX - 0x%lX : %lu bytes\n",
-            REALSIZE(tmp), (size_t)GET_NEXT_BLOCK(tmp), tmp->size);
+            B_SIZE(tmp), (size_t)GET_NEXT_BLOCK(tmp), tmp->size);
         }
     }
 }
