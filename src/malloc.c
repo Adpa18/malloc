@@ -80,11 +80,7 @@ t_malloc    *moreSpace(const size_t size, bool get)
     mem->next = NULL;
     mem->prev = last;
     if (!blocks)
-    {
       blocks = mem;
-      last = NULL;
-      // last->next = mem;
-    }
     else if (last)
     {
       last->next = mem;
