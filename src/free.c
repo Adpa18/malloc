@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:29 2016 Adrien WERY
-** Last update	Sat Feb 13 18:37:39 2016 Adrien WERY
+** Last update	Sat Feb 13 20:48:52 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -22,13 +22,16 @@ void    *getFreeBlock(t_block *tmp, size_t size, size_t *max)
     ptr = NULL;
     while (tmp)
     {
-        if (!ptr && tmp->isFree && tmp->size >= size)
+        if (tmp->isFree)
         {
-            tmp->isFree = false;
-            ptr = GET_PTR(tmp);
+            if (!ptr && tmp->size >= size)
+            {
+                tmp->isFree = false;
+                ptr = GET_PTR(tmp);
+            }
+            else if (tmp->size > *max)
+                *max = tmp->size;
         }
-        else if (tmp->isFree && tmp->size > *max)
-            *max = tmp->size;
         tmp = tmp->next;
     }
     return (ptr);
@@ -38,7 +41,7 @@ void    mergeBlocks(t_block **block)
 {
     if ((*block)->next && (*block)->next->isFree)
     {
-        if((*block)->next == (*block)->parent->lastBlock)
+        if ((*block)->next == (*block)->parent->lastBlock)
             (*block)->parent->lastBlock = (*block);
         (*block)->size += B_SIZE((*block)->next->size);
         (*block)->next = (*block)->next->next;
@@ -59,7 +62,7 @@ void    _free(void *ptr)
 {
     t_block *block;
 
-    RETURN(!ptr);
+    RETURN(!ptr || !VALID_PTR(ptr));
     block = GET_BLOCK(ptr);
     RETURN(block->isFree);
     // mergeBlocks(&block);
@@ -67,10 +70,7 @@ void    _free(void *ptr)
     if (block->parent == last && last->startBlock == last->lastBlock)
     {
         if (!(last = last->prev))
-            {
-                blocks = NULL;
-                last = NULL;
-            }
+            blocks = NULL;
         else
             last->next = NULL;
         brk(block->parent);
