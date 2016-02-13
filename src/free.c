@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:29 2016 Adrien WERY
-** Last update	Sat Feb 13 20:48:52 2016 Adrien WERY
+** Last update	Sat Feb 13 20:56:01 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -62,7 +62,7 @@ void    _free(void *ptr)
 {
     t_block *block;
 
-    RETURN(!ptr || !VALID_PTR(ptr));
+    RETURN(!ptr || ptr > LAST_PTR() || ptr < FIRST_PTR());
     block = GET_BLOCK(ptr);
     RETURN(block->isFree);
     // mergeBlocks(&block);

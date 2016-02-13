@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Sat Feb 13 20:47:12 2016 Adrien WERY
+** Last update	Sat Feb 13 20:51:52 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -45,7 +45,6 @@ typedef enum { false, true } bool;
 #define GET_NEXT_BLOCK(block) ((t_block*)(B_SIZE(block) + block->size))
 #define FIRST_PTR() ((void*)B_SIZE(blocks->startBlock))
 #define LAST_PTR() ((void*)B_SIZE(last->lastBlock))
-#define VALID_PTR(ptr) (ptr > FIRST_PTR() && ptr < LAST_PTR())
 #define ALIGN(size, pageSize) ((size + pageSize - 1) &~ (pageSize - 1))
 #define MAX(x, y) ((x > y) ? x : y)
 #define MIN(x, y) ((x < y) ? x : y)
