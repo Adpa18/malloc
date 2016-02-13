@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:01 2016 Adrien WERY
-** Last update	Thu Feb 11 11:47:56 2016 Adrien WERY
+** Last update	Sat Feb 13 18:36:36 2016 Adrien WERY
 */
 
 #ifndef MALLOC_H_
@@ -30,7 +30,7 @@ typedef enum { false, true } bool;
 
 #define MALLOC_SIZE sizeof(struct s_malloc)
 #define BLOCK_SIZE  sizeof(struct s_block)
-#define NB_PAGES    8
+#define NB_PAGES    2
 #define PAGE_SIZE   (size_t)(sysconf(_SC_PAGESIZE) * NB_PAGES)
 
 #define R_NULL(x) {if (x)return (NULL);}
@@ -73,6 +73,5 @@ void    *calloc(size_t nb, size_t size);
 void    *realloc(void *ptr, size_t size);
 void    free(void *ptr);
 void    show_alloc_mem();
-t_malloc    *moreSpace(const size_t size, bool get);
 
 #endif /* !MALLOC_H_ */

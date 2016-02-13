@@ -5,7 +5,7 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:13:37 2016 Adrien WERY
-** Last update	Thu Feb 11 11:36:29 2016 Adrien WERY
+** Last update	Sat Feb 13 16:22:16 2016 Adrien WERY
 */
 
 #include "malloc.h"
@@ -14,16 +14,23 @@ extern t_malloc    *blocks;
 
 void    show_alloc_mem()
 {
-    t_block *tmp;
+    t_malloc    *tmp;
+    t_block     *tmp2;
 
-    tmp = blocks->startBlock;
+    tmp = blocks;
     printf("break : 0x%lX\n", (size_t) sbrk(0));
     while (tmp)
     {
-        if (!tmp->isFree)
+        tmp2 = tmp->startBlock;
+        while (tmp2)
         {
-            printf("0x%lX - 0x%lX : %lu bytes\n",
-            B_SIZE(tmp), (size_t)GET_NEXT_BLOCK(tmp), tmp->size);
+            if (!tmp2->isFree)
+            {
+                printf("0x%lX - 0x%lX : %lu bytes\n",
+                B_SIZE(tmp2), (size_t)GET_NEXT_BLOCK(tmp2), tmp2->size);
+            }
+            tmp2 = tmp2->next;
         }
+        tmp = tmp->next;
     }
 }

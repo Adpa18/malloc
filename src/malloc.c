@@ -5,12 +5,13 @@
 ** Login	wery_a
 **
 ** Started on	Mon Feb 01 15:12:17 2016 Adrien WERY
-** Last update	Thu Feb 11 11:48:01 2016 Adrien WERY
+** Last update	Sat Feb 13 18:31:06 2016 Adrien WERY
 */
 
 #include "malloc.h"
 
 t_malloc    *blocks = NULL;
+t_malloc     *last = NULL;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
 t_block     *addBlock(const size_t size, t_block *block, t_malloc *parent)
@@ -38,21 +39,18 @@ void    *findSpace(t_malloc *tmp, const size_t size)
             tmp->freeSize -= MAX(B_SIZE(size), 0);
             return (GET_PTR(tmp->lastBlock));
         }
-        else if (tmp->maxFreeSize > size)
+        else if (tmp->maxFreeSize >= size)
             return (getFreeBlock(tmp->startBlock, size, &(tmp->maxFreeSize)));
         tmp = tmp->next;
     }
     return (NULL);
 }
 
-t_malloc    *moreSpace(const size_t size, bool get)
+t_malloc    *moreSpace(const size_t size)
 {
-    static t_malloc     *last = NULL;
     t_malloc    *mem;
     size_t      memSize;
 
-    if (get)
-      return (last);
     memSize = ALIGN(M_SIZE(B_SIZE(size)), PAGE_SIZE);
     R_NULL((mem = sbrk(memSize)) == (void *) -1);
     mem->freeSize = memSize - B_SIZE(size) - MALLOC_SIZE;
@@ -60,13 +58,11 @@ t_malloc    *moreSpace(const size_t size, bool get)
     mem->startBlock = addBlock(size, (t_block *)M_SIZE(mem), mem);
     mem->next = NULL;
     mem->prev = last;
-    if (!blocks)
+    if (last)
+        last->next = mem;
+    else
       blocks = mem;
-    else if (last)
-    {
-      last->next = mem;
-      last = mem;
-    }
+    last = mem;
     return (GET_PTR(mem->startBlock));
 }
 
@@ -76,7 +72,7 @@ void    *_malloc(size_t size)
 
     ptr = NULL;
     IF_SET(!ptr && blocks, ptr = findSpace(blocks, size));
-    IF_SET(!ptr, ptr = moreSpace(size, false));
+    IF_SET(!ptr, ptr = moreSpace(size));
     return (ptr);
 }
 
