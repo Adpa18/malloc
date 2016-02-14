@@ -15,8 +15,12 @@
 
 int main()
 {
-    for (size_t i = 0; i < 1000000; i++) {
-        malloc(1);
-    }
-    return (0);
+  int	i;
+
+  i = 0;
+  while (i < 1000000) {
+    malloc(1);
+    ++i;
+  }
+  return (0);
 }

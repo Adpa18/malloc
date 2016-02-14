@@ -65,7 +65,6 @@ void    _free(void *ptr)
     RETURN(!ptr || ptr > LAST_PTR() || ptr < FIRST_PTR());
     block = GET_BLOCK(ptr);
     RETURN(block->isFree);
-    // mergeBlocks(&block);
     block->isFree = true;
     if (block->parent == last && last->startBlock == last->lastBlock)
     {
@@ -92,5 +91,4 @@ void    free(void *ptr)
     _free(ptr);
     pthread_mutex_unlock(&mutex);
     DEBUG(write(1, "freeE\n", 6));
-    // DEBUG(show_alloc_mem());
 }
